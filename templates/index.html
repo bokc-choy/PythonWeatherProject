@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="form-container">
+        <form method="POST" action="/">
+            <h2>Get Weather Forecast</h2>
+            
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" id="location" name="location" placeholder="City, Country" required>
+            </div>
+            
+            <button type="submit" class="btn">Get Forecast</button>
+        </form>
+        
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+    </div>
+{% endblock %}

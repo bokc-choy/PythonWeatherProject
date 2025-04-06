@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="results-container">
+        <h2>Weather Forecast for {{ location }}</h2>
+        
+        <div class="current-weather">
+            <h3>Current Conditions</h3>
+            <p>Temperature: {{ current_temp }}°C</p>
+            <p>Conditions: {{ conditions }}</p>
+        </div>
+        
+        <div class="forecast-plot">
+            <h3>24-Hour Temperature Forecast</h3>
+            {% if plot %}
+                <img src="data:image/png;base64,{{ plot }}" alt="Temperature Forecast">
+            {% else %}
+                <p>No forecast data available</p>
+            {% endif %}
+        </div>
+        
+        <div class="hourly-forecast">
+            <h3>Hourly Forecast</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Temp (°C)</th>
+                        <th>Condition</th>
+                        <th>Precip (mm)</th>
+                        <th>Humidity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for hour in hours %}
+                        <tr>
+                            <td>{{ hour.time }}</td>
+                            <td>{{ hour.temp_c }}</td>
+                            <td>{{ hour.condition }}</td>
+                            <td>{{ hour.precip_mm }}</td>
+                            <td>{{ hour.humidity }}%</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <a href="/" class="btn">Search Again</a>
+    </div>
+{% endblock %}
