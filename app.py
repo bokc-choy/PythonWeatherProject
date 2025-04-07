@@ -7,6 +7,10 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import io
 import base64
+import numpy as np
+
+# Import custom algorithms
+from algorithms import CustomTempPredictor, custom_cluserting, detect_anomalies
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -66,16 +70,35 @@ def index():
             current_temp = weather_data['current']['temp_c']
             conditions = weather_data['current']['condition']['text']
             
+            # Process hourly forecast data from the first forecast day
+            hours_data = weather_data['forecast']['forecastday'][0]['hour']
+            # Extract temperature values for anomaly detectiona and prediction
+            temps = [hour['temp_c'] for hour in hours_data]
+            anomalies = detect_anomalies(np.array(temps), window_size=3, threshold=2.0)
+
+            # Build a feature array for clustering (using temperature and humidity)
+            clustering_data = np.array([[hour['temp_c'], hour['humidity']] for hour in hours_data])
+            clusters = custom_cluserting(clustering_data, n_clusters=2)
+
+            # Use the CustomTempPredictor to forecast the next temperature value
+            X = np.array([[i] for i in range(len(temps))])
+            y = np.array(temps)
+            predictor = CustomTempPredictor(learning_rate=0.01, n_iterations=1000)
+            predictor.fit(X, y)
+            next_temp = predictor.predict(np.array([[len(temps)]]))[0]
+
             #display
             formatted_hours = []
-            for hour in weather_data['forecast']['forecastday'][0]['hour'][:12]:
+            for i, hour in enumerate(hours_data[:12]):
                 hour_time = datetime.strptime(hour['time'], '%Y-%m-%d %H:%M')
                 formatted_hours.append({
                     'time': hour_time.strftime('%H:%M'),
                     'temp_c': hour['temp_c'],
                     'condition': hour['condition']['text'],
                     'precip_mm': hour['precip_mm'],
-                    'humidity': hour['humidity']
+                    'humidity': hour['humidity'],
+                    'anomaly': bool(anomalies[i]) if i < len(anomalies) else False,
+                    'cluster': int(clusters[i])
                 })
             
             return render_template('results.html', 
@@ -83,7 +106,8 @@ def index():
                                 location=location,
                                 current_temp=current_temp,
                                 conditions=conditions,
-                                hours=formatted_hours)
+                                hours=formatted_hours,
+                                next_temp=round(next_temp, 2))
         
         return render_template('index.html', error="Failed to fetch weather data")
     
