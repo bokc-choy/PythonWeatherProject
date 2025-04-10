@@ -103,35 +103,50 @@ def detect_anomalies(time_series: np.ndarray, window_size: int = 10, threshold: 
     - anomalies: np.ndarray of shape (n_samples), boolean array where true indicates an anomaly.
     """
     anomalies = np.zeros(len(time_series), dtype=bool)
-
-    # Start by checking from the index equal to window_size
+    
+    # Handle edge case where window_size is larger than series length
+    if window_size >= len(time_series):
+        return anomalies
+    
     for i in range(window_size, len(time_series)):
         window = time_series[i-window_size:i]
         mean = np.mean(window)
         std = np.std(window)
-        if std == 0:
-            continue # Avoid division by zero if the window is constant
-        if abs(time_series[i] - mean) > threshold * std:
+        
+        # Only flag as anomaly if std > 0 (avoid division by zero)
+        if std > 0 and abs(time_series[i] - mean) > threshold * std:
             anomalies[i] = True
+    
     return anomalies
 
-# Example usage for testing purposes
-if __name__ == "__main__":
-    # CustomTempPredictor example
-    X = np.array([[1], [2], [3], [4], [5]])
-    y = np.array([2, 4, 6, 8, 10])
-    predictor = CustomTempPredictor(learning_rate=0.01, n_iterations=1000)
-    predictor.fit(X, y)
-    predictions = predictor.predict(X)
-    print("predictions:", predictions)
+#     # Start by checking from the index equal to window_size
+#     for i in range(window_size, len(time_series)):
+#         window = time_series[i-window_size:i]
+#         mean = np.mean(window)
+#         std = np.std(window)
+#         if std == 0:
+#             continue # Avoid division by zero if the window is constant
+#         if abs(time_series[i] - mean) > threshold * std:
+#             anomalies[i] = True
+#     return anomalies
 
-    # custom_clustering example
-    data = np.array([[1, 2], [1, 4], [1, 0],
-                     [10, 2], [10, 4], [10, 0]])
-    labels = custom_cluserting(data, n_clusters=2)
-    print("Cluster labels:", labels)
+# # Example usage for testing purposes
+# if __name__ == "__main__":
+#     # CustomTempPredictor example
+#     X = np.array([[1], [2], [3], [4], [5]])
+#     y = np.array([2, 4, 6, 8, 10])
+#     predictor = CustomTempPredictor(learning_rate=0.01, n_iterations=1000)
+#     predictor.fit(X, y)
+#     predictions = predictor.predict(X)
+#     print("predictions:", predictions)
 
-    # detect_anomalies example
-    time_series = np.array([10, 12, 11, 13, 15, 100, 14, 13, 12, 15, 16])
-    anomalies = detect_anomalies(time_series, window_size=3, threshold=2.0)
-    print("Anomalies detected:", anomalies)
+#     # custom_clustering example
+#     data = np.array([[1, 2], [1, 4], [1, 0],
+#                      [10, 2], [10, 4], [10, 0]])
+#     labels = custom_cluserting(data, n_clusters=2)
+#     print("Cluster labels:", labels)
+
+#     # detect_anomalies example
+#     time_series = np.array([10, 12, 11, 13, 15, 100, 14, 13, 12, 15, 16])
+#     anomalies = detect_anomalies(time_series, window_size=3, threshold=2.0)
+#     print("Anomalies detected:", anomalies)

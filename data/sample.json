@@ -1,0 +1,65 @@
+{
+    "location": {
+      "name": "TestCity"
+    },
+    "current": {
+      "temp_c": 20,
+      "condition": {
+        "text": "Sunny"
+      }
+    },
+    "forecast": {
+      "forecastday": [
+        {
+          "hour": [
+            {
+              "time": "2024-04-10 00:00",
+              "temp_c": 0,
+              "humidity": 50,
+              "precip_mm": 0,
+              "condition": {
+                "text": "Clear"
+              }
+            },
+            {
+              "time": "2024-04-10 01:00",
+              "temp_c": 1,
+              "humidity": 51,
+              "precip_mm": 0,
+              "condition": {
+                "text": "Clear"
+              }
+            },
+            {
+              "time": "2024-04-10 02:00",
+              "temp_c": 2,
+              "humidity": 52,
+              "precip_mm": 0,
+              "condition": {
+                "text": "Clear"
+              }
+            },
+            {
+                "time": "2024-04-10 03:00",
+                "temp_c": 2,
+                "humidity": 50,
+                "precip_mm": 0,
+                "condition": {
+                  "text": "Clear"
+                }
+            },
+            {
+                "time": "2024-04-10 04:00",
+                "temp_c": 3,
+                "humidity": 50,
+                "precip_mm": 0,
+                "condition": {
+                  "text": "Clear"
+                }
+            }
+          ]
+        }
+      ]
+    }
+  }
+  
