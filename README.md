@@ -31,22 +31,28 @@ PythonWeatherProject/
 
 ```
 ## How to Setup/Run
-Setup virtual environment
-Install requirements:
+**Setup virtual environment**
+```bash
+python -m venv <environment_name>
+<environment_name>\Scripts\activate
+```
+**Install requirements:**
 ```bash
 pip install -r requirements.txt
 ```
-**To run the application:**
+**Run the application:**
 ```bash
 python app.py
 ```
-view on local host: http://127.0.0.1:5000/
+**View on local host:** 
+http://127.0.0.1:5000/
 
+## Unit Tests:
 **To run tests:**
 ```bash
 pytest tests/
 ```
-**Using the application:**
+## Using the application:
 - Type in a City into the search bar
 - Click "Get Forecast"
 - View forecast results
