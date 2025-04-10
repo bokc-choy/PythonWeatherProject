@@ -22,12 +22,13 @@ PythonWeatherProject/
 │ └── test_app.py
 │ └── test_data_processor.py
 │
+├── README.md
 ├── algorithms.py
 ├── app.py
 ├── config.py
 ├── data_processor.py
-├── requirementx.txt
-└── README.md
+└── requirementx.txt
+
 ```
 ## How to Setup/Run
 Setup virtual environment
