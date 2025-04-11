@@ -44,6 +44,45 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Similar Regions -->
+        <div class="similar-regions">
+            <h3>Climate Classification</h3>
+            <div class="cluster-info">
+                <p><strong>Cluster {{ cluster_id }}:</strong> {{ cluster_description }}</p>
+                {% if cluster_id != 'N/A' %}
+                <div class="cluster-characteristics">
+                    <p>Typical characteristics:</p>
+                    <ul>
+                        {% if cluster_id == 0 %}
+                            <li>High average temperatures</li>
+                            <li>Low precipitation</li>
+                            <li>Low humidity</li>
+                        {% elif cluster_id == 1 %}
+                            <li>Moderate temperatures</li>
+                            <li>Consistent rainfall</li>
+                            <li>Higher humidity</li>
+                        {% elif cluster_id == 2 %}
+                            <li>Cold temperatures</li>
+                            <li>Variable precipitation</li>
+                            <li>Seasonal variations</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        
+            <h3>Regions with Similar Climate Patterns</h3>
+            {% if similar_regions %}
+                <ul class="region-list">
+                    {% for region in similar_regions %}
+                        <li>{{ region }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No similar regions data available</p>
+            {% endif %}
+        </div>
         
         <a href="/" class="btn">Search Again</a>
     </div>

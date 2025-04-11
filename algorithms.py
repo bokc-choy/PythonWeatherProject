@@ -50,43 +50,54 @@ class CustomTempPredictor(BaseEstimator, RegressorMixin):
 
         return np.dot(X, self.weights) + self.bias
     
-def custom_cluserting(data: np.ndarray, n_clusters: int, n_iterations: int = 100) -> np.ndarray:
+def custom_clustering(data: np.ndarray, n_clusters: int = 3, n_iterations: int = 100) -> tuple[np.ndarray, np.ndarray]:
     """
-    A simple custom clusterng algorithm similar to k-means.
-
+    Enhanced custom clustering algorithm that returns both labels and cluster centers.
+    
     Parameters:
     - data: np.ndarray of shape (n_samples, n_features)
     - n_clusters: int, the number of clusters
     - n_iterations: int, maximum number of iterations
 
     Returns:
-    - labels: np.ndarray of shape (n_samples), cluster labels for each data point.
+    - Tuple of (labels, centers):
+        - labels: np.ndarray of shape (n_samples), cluster labels for each data point
+        - centers: np.ndarray of shape (n_clusters, n_features), the final cluster centers
     """
     n_samples, n_features = data.shape
-    # Initialize cluster centers by randomly selecting data points
     rng = np.random.default_rng()
-    indices = rng.choice(n_samples, size=n_clusters, replace=False)
-    centers = data[indices]
+    
+    # Initialize cluster centers using k-means++ style initialization
+    centers = np.zeros((n_clusters, n_features))
+    centers[0] = data[rng.integers(n_samples)]
+    
+    for k in range(1, n_clusters):
+        # Calculate squared distances to nearest center
+        distances = np.array([min([np.sum((x - c)**2) for c in centers[:k]]) for x in data])
+        # Choose new center with probability proportional to distance
+        probabilities = distances / distances.sum()
+        centers[k] = data[rng.choice(n_samples, p=probabilities)]
+    
     labels = np.zeros(n_samples, dtype=int)
-
+    
     for iteration in range(n_iterations):
-        # Assignment step: assign each point to the nearest center
-        new_labels = np.array([
-            np.argmin([np.linalg.norm(point - center) for center in centers])
-            for point in data
-        ])
+        # Assignment step
+        distances = np.zeros((n_samples, n_clusters))
+        for k in range(n_clusters):
+            distances[:, k] = np.sum((data - centers[k])**2, axis=1)
+        new_labels = np.argmin(distances, axis=1)
+        
         # Check for convergence
         if np.array_equal(labels, new_labels):
             break
         labels = new_labels
-        # Update step: recalculate centers as the mean of points in each cluster
+        
+        # Update step
         for k in range(n_clusters):
             if np.any(labels == k):
                 centers[k] = data[labels == k].mean(axis=0)
-            else:
-                # If no points are assigned to the cluser, reinitialize the center randomly
-                centers[k] = data[rng.choice(n_samples)]
-    return labels
+    
+    return labels, centers
 
 def detect_anomalies(time_series: np.ndarray, window_size: int = 10, threshold: float = 2.0) -> np.ndarray:
     """

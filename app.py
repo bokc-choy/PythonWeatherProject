@@ -10,6 +10,12 @@ import base64
 import numpy as np
 from datetime import datetime, time
 
+CLUSTER_DESCRIPTIONS = {
+    0: "Hot and Dry Climate",
+    1: "Temperate and Humid Climate", 
+    2: "Cold and Variable Climate",
+    'N/A': "Climate classification not available"
+}
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -68,12 +74,22 @@ def create_forecast_plot(forecast_hours):
 def index():
     if request.method == 'POST':
         location = request.form.get('location', 'London')
-        weather_data = weather_processor.get_processed_weather_data(location)  # Use the data processor
+        weather_data = weather_processor.get_processed_weather_data(location)
         
         if weather_data:
             plot = create_forecast_plot(weather_data['forecast_hours'])
             current_temp = weather_data['current_temp']
             conditions = weather_data['conditions']
+            
+            # Initialize default values
+            similar_regions = None
+            cluster_id = 'N/A'
+            
+            # Get similar climate regions if weather data exists
+            similar_regions_result = weather_processor.find_similar_climate_regions(location)
+            if similar_regions_result:
+                similar_regions = similar_regions_result.get('similar_regions')
+                cluster_id = similar_regions_result.get('cluster_id', 'N/A')
             
             #Display processed data
             formatted_hours = []
@@ -94,7 +110,10 @@ def index():
                                 current_temp=current_temp,
                                 conditions=conditions,
                                 hours=formatted_hours,
-                                next_temp=round(weather_data['next_temp_prediction'], 2))
+                                next_temp=round(weather_data['next_temp_prediction'], 2),
+                                similar_regions=similar_regions,
+                                cluster_id=cluster_id,
+                                cluster_description=CLUSTER_DESCRIPTIONS.get(cluster_id, "Unknown climate type"))
         
         return render_template('index.html', error="Failed to fetch weather data")
     
