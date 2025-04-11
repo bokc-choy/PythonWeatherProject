@@ -22,6 +22,8 @@ PythonWeatherProject/
 │ └── test_app.py
 │ └── test_data_processor.py
 │
+├── .gitignore
+├── CIS_Climate_Proj_Report.pdf
 ├── README.md
 ├── algorithms.py
 ├── app.py
