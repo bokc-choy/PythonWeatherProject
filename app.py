@@ -23,6 +23,9 @@ app.config.from_object(Config)
 # Initialize the WeatherDataProcessor
 weather_processor = WeatherDataProcessor(api_key=app.config['WEATHERAPI_KEY'])
 
+def convert_to_f(c):
+    return ((c*9/5)+32)
+
 def create_forecast_plot(forecast_hours):
     """Create temperature forecast plot from processed hourly data"""
     try:
@@ -79,6 +82,7 @@ def index():
         if weather_data:
             plot = create_forecast_plot(weather_data['forecast_hours'])
             current_temp = weather_data['current_temp']
+            current_temp_f = convert_to_f(current_temp)
             conditions = weather_data['conditions']
             
             # Initialize default values
@@ -108,6 +112,7 @@ def index():
                                 plot=plot,
                                 location=location,
                                 current_temp=current_temp,
+                                current_temp_f=current_temp_f,
                                 conditions=conditions,
                                 hours=formatted_hours,
                                 next_temp=round(weather_data['next_temp_prediction'], 2),
