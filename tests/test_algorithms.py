@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from algorithms import CustomTempPredictor, custom_cluserting, detect_anomalies
+from algorithms import CustomTempPredictor, custom_clustering, detect_anomalies
 
 class TestAlgorithms(unittest.TestCase):
 
@@ -14,9 +14,10 @@ class TestAlgorithms(unittest.TestCase):
 
     def test_custom_clustering(self):
         data = np.array([[1, 2], [1, 4], [1, 0], [10, 2], [10, 4], [10, 0]])
-        labels = custom_cluserting(data, n_clusters=2)
+        labels, centers = custom_clustering(data, n_clusters=2)
         self.assertEqual(len(labels), len(data))
         self.assertTrue(set(labels).issubset({0, 1}))
+        self.assertEqual(centers.shape, (2, 2))  # 2 clusters, 2 features
 
     def test_detect_anomalies(self):
         series = np.array([10, 12, 11, 13, 15, 100, 14, 13, 12, 15])
